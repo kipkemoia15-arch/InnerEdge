@@ -4,86 +4,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>InnerEdge</title>
 
     <link rel="stylesheet" href="styles.css">
-
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
 
-    <div class="sidebar">
-        <h2>InnerEdge</h2>
+<!-- ALERT -->
+<div id="alertBanner"></div>
 
-        <a href="#">Dashboard</a>
-        <a href="#">Trades</a>
-        <a href="#">Analytics</a>
-        <a href="#">Accounts</a>
-        <a href="#">Prop Firms</a>
-        <a href="#">Settings</a>
-    </div>
+<!-- ACCOUNT SELECTOR -->
+<div style="margin:10px;">
+    <label>Account: </label>
+    <select id="accountSelector" onchange="switchAccount(this.value)"></select>
+</div>
 
-    <div class="main">
+<div class="sidebar">
+    <h2>InnerEdge</h2>
+
+    <a href="#" onclick="showPage('dashboard')">Dashboard</a>
+    <a href="#" onclick="showPage('trades')">Trades</a>
+</div>
+
+<div class="main">
+
+    <!-- DASHBOARD -->
+    <div id="dashboardPage">
 
         <h1>Dashboard</h1>
 
+        <div>
+            <h3>Challenge Status: <span id="challengeStatus">ACTIVE</span></h3>
+        </div>
+
         <div class="cards">
 
-            <div class="card">
-                <h3>Balance</h3>
-                <p id="balance">Loading...</p>
-            </div>
+            <div class="card"><h3>Balance</h3><p id="balance">Loading...</p></div>
+            <div class="card"><h3>Equity</h3><p id="equity">Loading...</p></div>
+            <div class="card"><h3>Free Margin</h3><p id="margin">Loading...</p></div>
 
-            <div class="card">
-                <h3>Equity</h3>
-                <p id="equity">Loading...</p>
-            </div>
-
-            <div class="card">
-                <h3>Free Margin</h3>
-                <p id="margin">Loading...</p>
-            </div>
-
-            <div class="card">
-                <h3>Total Trades</h3>
-                <p id="totalTrades">Loading...</p>
-            </div>
-
-            <div class="card">
-                <h3>Total Profit</h3>
-                <p id="totalProfit">Loading...</p>
-            </div>
+            <div class="card"><h3>Total Trades</h3><p id="totalTrades">Loading...</p></div>
+            <div class="card"><h3>Total Profit</h3><p id="totalProfit">Loading...</p></div>
+            <div class="card"><h3>Win Rate</h3><p id="winRate">Loading...</p></div>
+            <div class="card"><h3>Profit Factor</h3><p id="profitFactor">Loading...</p></div>
 
         </div>
 
         <h2>Equity Curve</h2>
-
         <canvas id="equityChart"></canvas>
 
-        <h2>Open Positions</h2>
+    </div>
+
+    <!-- TRADES PAGE -->
+    <div id="tradesPage" style="display:none;">
+
+        <h1>Trades History</h1>
 
         <table>
-
             <thead>
-
                 <tr>
+                    <th>Ticket</th>
                     <th>Symbol</th>
-                    <th>Lots</th>
+                    <th>Volume</th>
                     <th>Profit</th>
+                    <th>Time</th>
                 </tr>
-
             </thead>
 
-            <tbody id="positions"></tbody>
-
+            <tbody id="tradesTable"></tbody>
         </table>
 
     </div>
 
-    <script src="app.js"></script>
+</div>
+
+<script src="app.js"></script>
 
 </body>
-
 </html>

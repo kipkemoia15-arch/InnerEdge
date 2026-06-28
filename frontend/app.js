@@ -1,174 +1,129 @@
-const API = "http://127.0.0.1:8000";
+const API = "http://localhost:8000";
 
 let equityChart = null;
+let currentAccount = 1;
 
-// --------------------
-// Account
-// --------------------
+// -----------------------------
+// INIT
+// -----------------------------
+async function init() {
 
+    await loadAccount();
+    await loadAnalytics(currentAccount);
+}
+
+// -----------------------------
+// ACCOUNT DATA
+// -----------------------------
 async function loadAccount() {
+
     try {
+
         const res = await fetch(`${API}/account`);
         const data = await res.json();
 
-        document.getElementById("balance").textContent =
-            `$${Number(data.balance).toFixed(2)}`;
+        console.log("ACCOUNT RESPONSE:", data);
 
-        document.getElementById("equity").textContent =
-            `$${Number(data.equity).toFixed(2)}`;
-
-        document.getElementById("margin").textContent =
-            `$${Number(data.free_margin).toFixed(2)}`;
+        setText("balance", formatMoney(data.balance));
+        setText("equity", formatMoney(data.equity));
+        setText("margin", formatMoney(data.free_margin));
 
     } catch (err) {
-        console.error("Account error:", err);
+
+        console.log("Account error:", err);
+
+        setText("balance", "Error");
+        setText("equity", "Error");
+        setText("margin", "Error");
     }
 }
 
-// --------------------
-// Analytics
-// --------------------
-
-async function loadAnalytics() {
+// -----------------------------
+// ANALYTICS
+// -----------------------------
+async function loadAnalytics(accountId) {
 
     try {
 
-        const res = await fetch(`${API}/analytics`);
+        const res = await fetch(`${API}/analytics?account_id=${accountId}`);
         const data = await res.json();
 
-        document.getElementById("totalTrades").textContent =
-            data.total_trades;
+        console.log("ANALYTICS RESPONSE:", data);
 
-        document.getElementById("totalProfit").textContent =
-            `$${Number(data.total_profit).toFixed(2)}`;
+        setText("totalTrades", data.total_trades);
+        setText("totalProfit", formatMoney(data.total_profit));
+        setText("winRate", `${data.win_rate}%`);
+        setText("profitFactor", data.profit_factor);
 
-        loadChart(data);
-
-    } catch (err) {
-
-        console.error("Analytics error:", err);
-
-    }
-
-}
-
-// --------------------
-// Positions
-// --------------------
-
-async function loadPositions() {
-
-    try {
-
-        const res = await fetch(`${API}/positions`);
-        const positions = await res.json();
-
-        const tbody = document.getElementById("positions");
-
-        tbody.innerHTML = "";
-
-        if (positions.length === 0) {
-
-            tbody.innerHTML =
-                `<tr>
-                    <td colspan="3">No open positions</td>
-                </tr>`;
-
-            return;
-        }
-
-        positions.forEach(position => {
-
-            tbody.innerHTML += `
-                <tr>
-                    <td>${position.symbol}</td>
-                    <td>${position.volume}</td>
-                    <td>${Number(position.profit).toFixed(2)}</td>
-                </tr>
-            `;
-
-        });
+        updateChart(data.equity_curve);
 
     } catch (err) {
 
-        console.error("Positions error:", err);
-
+        console.log("Analytics error:", err);
     }
-
 }
 
-// --------------------
-// Chart
-// --------------------
+// -----------------------------
+// SAFE TEXT UPDATE
+// -----------------------------
+function setText(id, value) {
 
-function loadChart(data) {
+    const el = document.getElementById(id);
 
-    const labels = data.equity_curve.map(p => p.time);
-    const values = data.equity_curve.map(p => p.equity);
+    if (!el) {
+        console.log("Missing element:", id);
+        return;
+    }
 
-    const ctx = document
-        .getElementById("equityChart")
-        .getContext("2d");
+    el.textContent = value ?? "0";
+}
+
+// -----------------------------
+// MONEY FORMAT
+// -----------------------------
+function formatMoney(value) {
+
+    if (value === null || value === undefined) return "$0.00";
+    return `$${Number(value).toFixed(2)}`;
+}
+
+// -----------------------------
+// EQUITY CHART
+// -----------------------------
+function updateChart(curve) {
+
+    if (!curve || curve.length === 0) return;
+
+    const labels = curve.map((_, i) => i + 1);
+    const values = curve.map(p => p.equity);
+
+    const ctx = document.getElementById("equityChart")?.getContext("2d");
+
+    if (!ctx) return;
 
     if (equityChart) {
-        equityChart.destroy();
+
+        equityChart.data.labels = labels;
+        equityChart.data.datasets[0].data = values;
+        equityChart.update();
+        return;
     }
 
     equityChart = new Chart(ctx, {
-
         type: "line",
-
         data: {
-
-            labels,
-
-            datasets: [
-
-                {
-
-                    label: "Equity Curve",
-
-                    data: values,
-
-                    borderColor: "lime",
-
-                    tension: 0.3,
-
-                    fill: false
-
-                }
-
-            ]
-
-        },
-
-        options: {
-
-            responsive: true,
-
-            maintainAspectRatio: false
-
+            labels: labels,
+            datasets: [{
+                label: "Equity Curve",
+                data: values,
+                borderWidth: 2,
+                tension: 0.3
+            }]
         }
-
     });
-
 }
 
-// --------------------
-// Refresh
-// --------------------
-
-async function refreshDashboard() {
-
-    await Promise.all([
-        loadAccount(),
-        loadAnalytics(),
-        loadPositions()
-    ]);
-
-}
-
-refreshDashboard();
-
-// Refresh every 10 seconds
-setInterval(refreshDashboard, 10000);
+// -----------------------------
+// START APP
+// -----------------------------
+document.addEventListener("DOMContentLoaded", init);
