@@ -1,4 +1,5 @@
-from database import connect_db
+from backend.database import connect_db
+
 
 def get_trades():
     conn = connect_db()
@@ -18,7 +19,7 @@ def get_trades():
             "symbol": r[0],
             "volume": r[1],
             "profit": r[2],
-            "time": r[3]
+            "time": r[3],
         }
         for r in rows
     ]

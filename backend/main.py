@@ -1,22 +1,31 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
-from mt5_connector import (
+from backend.mt5_connector import (
     connect,
     get_account_info,
     get_positions,
     get_closed_trades,
 )
 
-from database import (
+from backend.database import (
     create_tables,
     check_table,
     save_trade,
 )
 
-from journal import get_trades
-from analytics import get_stats
+from backend.journal import get_trades
+from backend.analytics import get_stats
 
 app = FastAPI(title="InnerEdge API")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.on_event("startup")

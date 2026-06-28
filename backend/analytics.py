@@ -1,4 +1,5 @@
-from database import connect_db
+from backend.database import connect_db
+
 
 def get_stats():
     conn = connect_db()
@@ -8,7 +9,7 @@ def get_stats():
     rows = cursor.fetchall()
 
     total_trades = len(rows)
-    total_profit = sum([r[0] for r in rows]) if rows else 0
+    total_profit = sum(r[0] for r in rows) if rows else 0
 
     equity_curve = []
     running = 0
