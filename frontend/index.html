@@ -1,66 +1,89 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>InnerEdge</title>
+
     <link rel="stylesheet" href="styles.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
+
 <body>
 
-<div class="sidebar">
-    <h2>InnerEdge</h2>
+    <div class="sidebar">
+        <h2>InnerEdge</h2>
 
-    <a href="#">Dashboard</a>
-    <a href="#">Trades</a>
-    <a href="#">Analytics</a>
-    <a href="#">Accounts</a>
-    <a href="#">Prop Firms</a>
-    <a href="#">Settings</a>
-</div>
+        <a href="#">Dashboard</a>
+        <a href="#">Trades</a>
+        <a href="#">Analytics</a>
+        <a href="#">Accounts</a>
+        <a href="#">Prop Firms</a>
+        <a href="#">Settings</a>
+    </div>
 
-<div class="main">
+    <div class="main">
 
-    <h1>Dashboard</h1>
+        <h1>Dashboard</h1>
 
-    <div class="cards">
+        <div class="cards">
 
-        <div class="card">
-            <h3>Balance</h3>
-            <p id="balance">Loading...</p>
+            <div class="card">
+                <h3>Balance</h3>
+                <p id="balance">Loading...</p>
+            </div>
+
+            <div class="card">
+                <h3>Equity</h3>
+                <p id="equity">Loading...</p>
+            </div>
+
+            <div class="card">
+                <h3>Free Margin</h3>
+                <p id="margin">Loading...</p>
+            </div>
+
+            <div class="card">
+                <h3>Total Trades</h3>
+                <p id="totalTrades">Loading...</p>
+            </div>
+
+            <div class="card">
+                <h3>Total Profit</h3>
+                <p id="totalProfit">Loading...</p>
+            </div>
+
         </div>
 
-        <div class="card">
-            <h3>Equity</h3>
-            <p id="equity">Loading...</p>
-        </div>
+        <h2>Equity Curve</h2>
 
-        <div class="card">
-            <h3>Free Margin</h3>
-            <p id="margin">Loading...</p>
-        </div>
+        <canvas id="equityChart"></canvas>
+
+        <h2>Open Positions</h2>
+
+        <table>
+
+            <thead>
+
+                <tr>
+                    <th>Symbol</th>
+                    <th>Lots</th>
+                    <th>Profit</th>
+                </tr>
+
+            </thead>
+
+            <tbody id="positions"></tbody>
+
+        </table>
 
     </div>
 
-    <h2>Open Positions</h2>
-
-    <table>
-        <thead>
-            <tr>
-                <th>Symbol</th>
-                <th>Lots</th>
-                <th>Profit</th>
-            </tr>
-        </thead>
-
-        <tbody id="positions"></tbody>
-    </table>
-
-</div>
-
-<script src="app.js"></script>
+    <script src="app.js"></script>
 
 </body>
-</html><canvas id="equityChart"></canvas><div class="cards">
-    ...
-</div>
 
-<canvas id="equityChart"></canvas>
+</html>
